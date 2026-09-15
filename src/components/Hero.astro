@@ -1,25 +1,71 @@
 ---
-import { Image } from 'astro:assets';
-import mobileImg from '../assets/images/image-web-3-mobile.jpg';
-import desktopImg from '../assets/images/image-web-3-desktop.jpg';
+import type { NewsAPIResponse } from "../types/news";
+import imageWeb3Mobile from "../assets/images/image-web-3-mobile.jpg";
+import imageWeb3Desktop from "../assets/images/image-web-3-desktop.jpg";
 
-interface Props {
-    styles?: string;
+const apiKey = import.meta.env.NEWS_API_KEY;
+const url = `https://newsapi.org/v2/top-headlines?country=us&category=technology&apiKey=${apiKey}`;
+let datos: NewsAPIResponse | null = null;
+try {
+  const respuesta = await fetch(url);
+  if (!respuesta.ok) {
+    throw new Error(`Error de la API: ${respuesta.status}`);
+  }
+  datos = await respuesta.json();
+} catch (error) {
+  console.log("Error al obtener datos", error);
 }
-const {styles} = Astro.props;
+interface Props {
+  styles?: string;
+}
+const { styles } = Astro.props;
+const fallbackArticle = {
+  title: "The Bright Future of Web 3.0?",
+  description:
+    "We dive into the next evolution of the web that claims to put the power of the platforms back into the hands of the people. But is it really fulfilling its promise?",
+  urlToImage: imageWeb3Desktop.src,
+  url: "#",
+  source: { id: "", name: "" },
+  publishedAt: "",
+  content: "",
+};
+const featuredArticle = datos?.articles?.[0] || fallbackArticle;
 ---
 
-<header class={`${styles} mb-16`}>
-    <div class="mb-6 xl:mb-10">
-        <Image class="sm:hidden" src={mobileImg} alt="Web 3.0"/>
-        <Image class="hidden sm:block" src={desktopImg} alt="Web 3.0"/>
+<header class={`${styles}`}>
+  <div class="mb-6 xl:mb-5">
+    <img
+      class="sm:hidden"
+      src={featuredArticle.urlToImage || imageWeb3Mobile.src}
+      alt={featuredArticle.title}
+      width="433"
+      height="300"
+    />
+    <img
+      class="hidden sm:block"
+      src={featuredArticle.urlToImage || imageWeb3Desktop.src}
+      alt={featuredArticle.title}
+      width="748"
+      height="500"
+    />
+  </div>
+
+  <div class="flex flex-col max-w-187 xl:flex-row xl:gap-2">
+    <div class="xl:flex-1">
+      <h1
+        class="text-3xl leading-tight font-bold xl:text-[2.3rem] xl:flex-1 xl:mb-0 line-clamp-4 text-wrap-pretty lg:mb-4 mb-2"
+      >
+        {featuredArticle.title}
+      </h1>
     </div>
-    
-    <div class="flex flex-col items-start xl:flex-row">
-        <h1 class="text-[2.5rem]/10 font-extrabold mb-6 xl:text-[3.5rem]/14 xl:flex-1 xl:mb-0">The Bright Future of Web 3.0?</h1>
-        <div class="xl:flex-1">
-            <p class="text-Dark-grayish-blue text-[0.9375rem] mb-6">We dive into the next evolution of the web that claims to put the power of the platforms back into the hands of the people. But is it really fulfilling its promise?</p>
-            <button class="bg-Soft-red uppercase px-8 py-3 font-bold cursor-pointer hover:bg-Soft-red/90 transition duration-300">Read more</button>
-        </div>
+    <div class="xl:flex-1 flex flex-col justify-between gap-8">
+      <p class="text-Dark-grayish-blue text-[0.9375rem] text-wrap-pretty">
+        {featuredArticle.description}
+      </p>
+      <button
+        class="bg-Soft-red uppercase px-8 py-3 font-bold cursor-pointer hover:bg-Soft-red/90 transition duration-300 self-start"
+        >Read more</button
+      >
     </div>
+  </div>
 </header>
