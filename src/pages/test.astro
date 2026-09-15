@@ -1,0 +1,33 @@
+---
+const apiKey = import.meta.env.NEWS_API_KEY;
+const url = `https://newsapi.org/v2/everything?q=keyword&apiKey=${apiKey}`;
+const respuesta = await fetch(url);
+const datos = await respuesta.json() as NewsAPIResponse;
+console.log("--- DATOS (Vía URL) ---");
+console.log(datos);
+
+interface Article {
+    author: string;
+    title: string;
+    description: string;
+    url: string;
+    urlToImage: string;
+    publishedAt: string;
+    content: string;
+    source: {
+        id: string;
+        name: string;
+    }
+}
+interface NewsAPIResponse {
+    status: string;
+    totalResults: number;
+    articles: Article[];
+}
+
+---
+<h2>
+    {datos.articles.map((article) => (
+        <p>{article.title}</p>
+    ))}
+</h2>
