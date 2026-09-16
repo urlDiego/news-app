@@ -1,9 +1,13 @@
 ---
-interface New {
-    title: string;
-    description: string;
+import type { Article } from '../types/news';
+
+interface Props {
+    styles?: string;
+    articles?: Article[];
 }
-const articles: New[] = [
+
+const {styles, articles} = Astro.props;
+const fallbackArticles = [
     {
         title: "Hydrogen VS Electric Cars",
         description: "Will hydrogen-fueled cars ever catch up to EVs?"
@@ -17,18 +21,13 @@ const articles: New[] = [
         description: "Private funding by VC firms is down 50% YOY. We take a look at what that means."
     }
 ]
-
-interface Props {
-    styles?: string;
-}
-
-const {styles} = Astro.props;
+const articlesData = articles || fallbackArticles;
 ---
 
-<section class={`${styles} bg-Very-dark-blue text-Off-white py-4 px-6`}>
+<section class={`${styles} bg-Very-dark-blue text-Off-white py-4 px-6 h-full`}>
     <h2 class="text-Soft-orange font-bold text-[2rem]">New</h2>
     {
-        articles.map((article) => (
+        articlesData.map((article) => (
             <article class="border-b border-Grayish-blue py-8 last:border-none xl:py-6">
                 <a href="#" class="font-extrabold text-xl inline-block mb-2 cursor-pointer hover:text-Soft-orange">{article.title}</a>
                 <p class="text-Grayish-blue text-[0.9375rem]">{article.description}</p>

@@ -1,47 +1,22 @@
 ---
-import { Image } from 'astro:assets';
-import ImageArticle1 from '../assets/images/image-retro-pcs.jpg';
-import ImageArticle2 from '../assets/images/image-top-laptops.jpg';
-import ImageArticle3 from '../assets/images/image-gaming-growth.jpg';
+import type { Article } from "../types/news";
+import imageFallback from "../assets/images/image-retro-pcs.jpg";
 
-interface Article {
-    number: string;
-    title: string;
-    description: string;
-    img: ImageMetadata;
+interface Props {
+  articles?: Article[];
 }
-
-const articles: Article[] = [
-    {
-        number: '01',
-        title: 'Reviving Retro PCs',
-        description: 'What happens when old PCs are given modern upgrades?',
-        img: ImageArticle1,
-    },
-    {
-        number: '02',
-        title: 'Top 10 Laptops of 2022',
-        description: 'Our best picks for various needs and budgets.',
-        img: ImageArticle2,
-    },
-    {
-        number: '03',
-        title: 'The Growth of Gaming',
-        description: 'How the pandemic has sparked fresh opportunities.',
-        img: ImageArticle3,
-    }
-];
+const { articles = [] } = Astro.props;
 ---
 
 <section class="flex flex-col lg:flex-row">
     {
-        articles.map(({number, title, description, img}: Article) => (
-            <article class="flex mb-8 gap-8">
-                <Image class="w-25" src={img} alt={title}/>
+        articles.map((article, index) => (
+            <article class="flex flex-1 lg:flex-row mb-8 gap-5">
+                <img src={article.urlToImage || imageFallback.src} alt={article.title} class="w-25 h-25" onerror={`this.onerror=null;this.src='${imageFallback.src}'`}/>
                 <div>
-                    <p class="text-[2rem] font-bold text-Soft-orange">{number}</p>
-                    <a href="#" class="font-extrabold text-lg cursor-pointer hover:text-Soft-red transition-colors duration-500">{title}</a>
-                    <p class="text-Dark-grayish-blue text-[0.9375rem]">{description}</p>
+                    <p class="text-[2rem] font-bold text-Soft-orange">{String(index + 1).padStart(2, '0')}</p>
+                    <a href={article.url} class="font-extrabold text-lg cursor-pointer hover:text-Soft-red transition-colors duration-500 text-wrap-pretty">{article.title}</a>
+                    <p class="text-Dark-grayish-blue text-[0.9375rem] text-wrap-pretty">{article.description ?? 'No description available.'}</p>
                 </div>
             </article>
         ))
