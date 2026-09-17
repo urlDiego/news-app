@@ -8,11 +8,11 @@ interface Props {
 const { articles = [] } = Astro.props;
 ---
 
-<section class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12 pt-8 border-t border-gray-200">
+<section class="flex flex-col gap-8">
   {
     articles.map((article, index) => (
-      <article class="flex flex-row gap-4 items-start group cursor-pointer">
-        <div class="w-20 h-20 shrink-0 overflow-hidden rounded-md shadow-sm">
+      <article class="flex flex-row gap-5 group cursor-pointer">
+        <div class="w-24 h-24 md:w-32 md:h-32 shrink-0 overflow-hidden rounded-xl">
           <img
             src={article.urlToImage || imageFallback.src}
             alt={article.title}
@@ -20,21 +20,23 @@ const { articles = [] } = Astro.props;
             onerror={`this.onerror=null;this.src='${imageFallback.src}'`}
           />
         </div>
-        
         <div class="flex flex-col flex-1 justify-start">
-          <p class="text-3xl font-bold text-Soft-orange leading-none mb-1">
+          <p class="text-[2rem] font-bold text-Soft-orange leading-none mb-2">
             {String(index + 1).padStart(2, "0")}
           </p>
+          
           <a
             href={article.url}
-            class="font-extrabold text-base lg:text-lg leading-tight transition-colors duration-300 mb-2 line-clamp-3 group-hover:text-Soft-red"
+            class="font-extrabold text-lg transition-colors duration-500 mb-2 line-clamp-2 group-hover:text-Soft-red"
           >
             {article.title}
           </a>
-          <p class="text-Dark-grayish-blue text-sm line-clamp-2">
+          
+          <p class="text-Dark-grayish-blue text-[0.9375rem] line-clamp-3">
             {article.description ?? "No description available."}
           </p>
         </div>
+        
       </article>
     ))
   }
