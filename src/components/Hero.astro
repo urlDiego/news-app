@@ -51,11 +51,11 @@ const featuredArticle = article || fallbackArticle;
     </div>
     <div class="xl:flex-1 flex flex-col justify-between gap-8">
       <p class="text-Dark-grayish-blue text-[0.9375rem] text-wrap-pretty">
-        {featuredArticle.description}
+        {featuredArticle.description ?? "No description available."}
       </p>
       <button
         class="bg-Soft-red uppercase px-8 py-3 font-bold cursor-pointer hover:bg-Soft-red/90 transition duration-300 self-start"
-        >Read more</button
+        ><a href={featuredArticle.url} target="_blank">Read more</a></button
       >
     </div>
   </div>
