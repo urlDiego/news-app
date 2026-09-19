@@ -1,5 +1,7 @@
 # 📰 News Homepage
 
+**🔗 [Demo en vivo](https://news-app-indol-two.vercel.app/)**
+
 Aplicación de noticias en tiempo real construida con **Astro en modo SSR**, **Tailwind CSS v4** y **TypeScript**. Consume la API pública de [NewsAPI.org](https://newsapi.org/) para mostrar titulares actualizados en cada carga de página.
 
 > 🚧 **Proyecto en desarrollo activo** — el frontend con SSR y datos reales ya está funcionando. Próximamente se integrará un backend propio, base de datos y autenticación.
