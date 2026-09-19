@@ -2,7 +2,7 @@
 
 Aplicación de noticias en tiempo real construida con **Astro en modo SSR**, **Tailwind CSS v4** y **TypeScript**. Consume la API pública de [NewsAPI.org](https://newsapi.org/) para mostrar titulares actualizados en cada carga de página.
 
-> 🚧 **Proyecto en desarrollo activo** — actualmente en el Bloque C (Astro SSR + NewsAPI). Las próximas fases incorporarán un backend propio con Fastify, base de datos PostgreSQL, autenticación con JWT y deploy completo con Docker.
+> 🚧 **Proyecto en desarrollo activo** — el frontend con SSR y datos reales ya está funcionando. Próximamente se integrará un backend propio, base de datos y autenticación.
 
 ---
 
@@ -93,20 +93,16 @@ NEWS_API_KEY=tu_api_key_aquí
 
 ---
 
-## 🗺️ Roadmap
+## 🔮 Lo que viene
 
-| Bloque | Estado | Descripción |
-|---|---|---|
-| A — Responsive Design | ✅ Completado | Layout adaptado con Tailwind |
-| B — Preparación | ✅ Completado | Node, Docker, Git configurados |
-| C — Astro SSR + NewsAPI | ✅ Completado | SSR activado, datos reales de NewsAPI |
-| D — Docker + PostgreSQL | 🔜 Próximo | BD con Docker Compose |
-| E — Drizzle ORM | 🔜 Pendiente | Schema y migraciones |
-| F — Fastify Backend | 🔜 Pendiente | API REST propia con Node.js |
-| G — CORS + Integración | 🔜 Pendiente | Astro consumiendo la API propia |
-| H — Auth + Features | 🔜 Pendiente | JWT, bookmarks, búsqueda |
-| I — Docker Full Stack | 🔜 Pendiente | Todo el stack en contenedores |
-| J — Deploy | 🔜 Pendiente | Railway / Render |
+El proyecto está en crecimiento activo. Las siguientes funcionalidades están planificadas:
+
+- **API REST propia** con Node.js y Fastify como intermediario entre el frontend y la base de datos
+- **Base de datos PostgreSQL** para persistir artículos y usuarios
+- **Autenticación con JWT** — registro, login y sesión segura con cookies `httpOnly`
+- **Funcionalidades de usuario** — guardar artículos favoritos, búsqueda por keyword y filtros por categoría
+- **Containerización** con Docker para estandarizar el entorno de desarrollo
+- **Deploy en producción** con todo el stack corriendo en la nube
 
 ---
 
