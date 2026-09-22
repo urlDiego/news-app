@@ -25,7 +25,7 @@ const featuredArticle = article || fallbackArticle;
   <div class="mb-6 xl:mb-5">
     <img
       class="sm:hidden"
-      src={featuredArticle.urlToImage || imageWeb3Mobile.src}
+      src={featuredArticle.image_url || featuredArticle.urlToImage || imageWeb3Mobile.src}
       alt={featuredArticle.title}
       width="433"
       height="300"
@@ -33,7 +33,7 @@ const featuredArticle = article || fallbackArticle;
     />
     <img
       class="hidden sm:block"
-      src={featuredArticle.urlToImage || imageWeb3Desktop.src}
+      src={featuredArticle.image_url || featuredArticle.urlToImage || imageWeb3Desktop.src}
       alt={featuredArticle.title}
       width="748"
       height="500"
@@ -53,10 +53,12 @@ const featuredArticle = article || fallbackArticle;
       <p class="text-Dark-grayish-blue text-[0.9375rem] text-wrap-pretty">
         {featuredArticle.description ?? "No description available."}
       </p>
-      <button
-        class="bg-Soft-red uppercase px-8 py-3 font-bold cursor-pointer hover:bg-Soft-red/90 transition duration-300 self-start"
-        ><a href={featuredArticle.url} target="_blank">Read more</a></button
+      <a
+        href={featuredArticle.id ? `/articles/${featuredArticle.id}` : featuredArticle.url}
+        class="bg-Soft-red uppercase px-8 py-3 font-bold text-Off-white cursor-pointer hover:bg-Very-dark-blue transition duration-300 self-start"
       >
+        Read more
+      </a>
     </div>
   </div>
 </header>

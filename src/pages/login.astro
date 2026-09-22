@@ -1,0 +1,101 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+  <section class="max-w-md mx-auto px-4 py-12">
+    <div class="bg-Off-white border border-Grayish-blue/20 rounded-lg p-8 shadow-sm">
+      <h1 class="text-3xl font-extrabold text-Very-dark-blue mb-2">Iniciar Sesión</h1>
+      <p class="text-Dark-grayish-blue text-sm mb-6">
+        ¿No tienes cuenta?{" "}
+        <a href="/register" class="text-Soft-red hover:underline font-bold">Regístrate aquí</a>
+      </p>
+
+      <form id="login-form" class="flex flex-col gap-4">
+        <div>
+          <label for="email" class="block text-sm font-bold text-Very-dark-blue mb-1">
+            Correo electrónico
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            placeholder="usuario@ejemplo.com"
+            class="w-full px-4 py-2.5 border border-Grayish-blue/50 rounded focus:outline-none focus:border-Very-dark-blue transition-colors"
+          />
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-bold text-Very-dark-blue mb-1">
+            Contraseña
+          </label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            placeholder="••••••••"
+            class="w-full px-4 py-2.5 border border-Grayish-blue/50 rounded focus:outline-none focus:border-Very-dark-blue transition-colors"
+          />
+        </div>
+
+        <p id="error-msg" class="text-Soft-red text-sm font-medium hidden"></p>
+
+        <button
+          type="submit"
+          class="w-full bg-Very-dark-blue hover:bg-Soft-red text-Off-white font-bold py-3 uppercase tracking-widest text-sm transition-colors duration-200 mt-2 cursor-pointer"
+        >
+          Entrar
+        </button>
+      </form>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const form = document.getElementById("login-form") as HTMLFormElement | null;
+  const errorMsg = document.getElementById("error-msg") as HTMLParagraphElement | null;
+  const apiUrl = import.meta.env.PUBLIC_API_URL || "http://localhost:3001";
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (errorMsg) {
+      errorMsg.textContent = "";
+      errorMsg.classList.add("hidden");
+    }
+
+    const formData = new FormData(form);
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    try {
+      const res = await fetch(`${apiUrl}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Credenciales incorrectas");
+      }
+
+      // Guardar token JWT recibido
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+
+      window.location.href = "/";
+    } catch (err: any) {
+      if (errorMsg) {
+        errorMsg.textContent = err.message || "Ocurrió un error inesperado";
+        errorMsg.classList.remove("hidden");
+      }
+    }
+  });
+</script>

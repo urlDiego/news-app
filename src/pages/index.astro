@@ -1,28 +1,27 @@
 ---
-import type { NewsAPIResponse } from "../types/news";
-import Layout from "../layouts/Layout.astro"
-import Hero from "../components/Hero.astro"
-import New from "../components/New.astro"
-import Articles from "../components/articles.astro"
-const apiKey = import.meta.env.NEWS_API_KEY;
-const url = `https://newsapi.org/v2/top-headlines?country=us&category=technology&apiKey=${apiKey}`;
-let datos: NewsAPIResponse | null = null;
+import Layout from "../layouts/Layout.astro";
+import Hero from "../components/Hero.astro";
+import New from "../components/New.astro";
+import Articles from "../components/articles.astro";
+
+const apiUrl = import.meta.env.PUBLIC_API_URL;
+let articles: any[] = [];
+
 try {
-  const respuesta = await fetch(url);
+  const respuesta = await fetch(`${apiUrl}/api/articles?limit=10`);
   if (!respuesta.ok) {
     throw new Error(`Error de la API: ${respuesta.status}`);
   }
-  datos = await respuesta.json();
+  articles = await respuesta.json();
 } catch (error) {
-  console.error("Error al obtener datos", error);
+  console.error("Error al obtener datos:", error);
 }
-const articles = datos?.articles ?? [];
 ---
 
 <Layout>
-    <div class="flex flex-col lg:flex-row gap-6 mb-12 items-stretch">
-        <Hero styles="flex-2" article={articles[0]}/>
-        <New styles="flex-1" articles={articles.slice(2,5)}/>
-    </div>
-    <Articles articles={articles.slice(5, 8)} />
+  <div class="flex flex-col lg:flex-row gap-6 mb-12 items-stretch">
+    <Hero styles="flex-2" article={articles[0]} />
+    <New styles="flex-1" articles={articles.slice(1, 4)} />
+  </div>
+  <Articles articles={articles.slice(4, 7)} />
 </Layout>

@@ -24,7 +24,14 @@ export const users = pgTable('users', {
     email: varchar('email', { length: 255 }).notNull().unique(),
     password_hash: varchar('password_hash', { length: 255 }).notNull(),
     created_at: timestamp('created_at').defaultNow().notNull()
-})
+});
+
+export const bookmarks = pgTable('bookmarks', {
+    id: serial('id').primaryKey(),
+    user_id: integer('user_id').references(() => users.id).notNull(),
+    article_id: integer('article_id').references(() => articles.id).notNull(),
+    created_at: timestamp('created_at').defaultNow().notNull(),
+});
 
 export type Category = typeof categories.$inferSelect;
 export type CategoryInsert = typeof categories.$inferInsert;
@@ -34,3 +41,6 @@ export type ArticleInsert = typeof articles.$inferInsert;
 
 export type User = typeof users.$inferSelect;
 export type UserInsert = typeof users.$inferInsert;
+
+export type Bookmark = typeof bookmarks.$inferSelect;
+export type BookmarkInsert = typeof bookmarks.$inferInsert;

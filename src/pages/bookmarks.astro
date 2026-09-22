@@ -1,0 +1,150 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+  <section class="max-w-4xl mx-auto px-4 py-8">
+    <h1 class="text-[2.5rem] font-extrabold text-Very-dark-blue mb-2">Bookmarks</h1>
+    <p class="text-Dark-grayish-blue text-sm mb-8">
+      Tus noticias y artículos guardados para leer más tarde.
+    </p>
+
+    <!-- Estado No Autenticado -->
+    <div id="unauth-state" class="hidden p-8 border border-Grayish-blue/30 rounded-lg text-center bg-Off-white">
+      <p class="text-lg font-bold text-Very-dark-blue mb-2">Inicia sesión para ver tus marcadores</p>
+      <p class="text-Dark-grayish-blue text-sm mb-6">Debes iniciar sesión con tu cuenta para acceder a tus artículos guardados.</p>
+      <a
+        href="/login"
+        class="inline-block bg-Very-dark-blue hover:bg-Soft-red text-Off-white font-bold px-8 py-3 uppercase tracking-widest text-sm transition-colors duration-200"
+      >
+        Iniciar Sesión
+      </a>
+    </div>
+
+    <!-- Estado Vacío -->
+    <div id="empty-state" class="hidden p-8 border border-Grayish-blue/30 rounded-lg text-center bg-Off-white">
+      <p class="text-lg font-bold text-Very-dark-blue mb-2">No tienes artículos guardados</p>
+      <p class="text-Dark-grayish-blue text-sm mb-6">Explora las noticias y presiona el botón "🔖 Guardar" en cualquier artículo.</p>
+      <a
+        href="/"
+        class="inline-block bg-Soft-red hover:bg-Very-dark-blue text-Off-white font-bold px-8 py-3 uppercase tracking-widest text-sm transition-colors duration-200"
+      >
+        Explorar Noticias
+      </a>
+    </div>
+
+    <!-- Lista de Artículos Guardados -->
+    <div id="bookmarks-list" class="flex flex-col gap-6"></div>
+  </section>
+</Layout>
+
+<script>
+  const unauthState = document.getElementById("unauth-state");
+  const emptyState = document.getElementById("empty-state");
+  const bookmarksList = document.getElementById("bookmarks-list");
+  const apiUrl = import.meta.env.PUBLIC_API_URL || "http://localhost:3001";
+  const token = localStorage.getItem("token");
+
+  async function loadBookmarks() {
+    if (!token) {
+      unauthState?.classList.remove("hidden");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${apiUrl}/api/bookmarks`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          localStorage.removeItem("token");
+          unauthState?.classList.remove("hidden");
+          return;
+        }
+        throw new Error("Error al cargar marcadores");
+      }
+
+      const articles = await res.json();
+
+      if (!articles || articles.length === 0) {
+        emptyState?.classList.remove("hidden");
+        return;
+      }
+
+      if (bookmarksList) {
+        bookmarksList.innerHTML = "";
+        articles.forEach((article: any, index: number) => {
+          const item = document.createElement("article");
+          item.className = "flex flex-row gap-5 group items-start border-b border-Grayish-blue/20 pb-6";
+
+          const imageSrc = article.image_url || "/images/image-retro-pcs.jpg";
+
+          item.innerHTML = `
+            <div class="w-24 h-24 md:w-32 md:h-32 shrink-0 overflow-hidden rounded-xl bg-Grayish-blue/20">
+              <img
+                src="${imageSrc}"
+                alt="${article.title}"
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                onerror="this.src='/images/image-retro-pcs.jpg'"
+              />
+            </div>
+            <div class="flex flex-col flex-1 justify-start">
+              <div class="flex items-center justify-between mb-1">
+                <p class="text-2xl font-bold text-Soft-orange leading-none">
+                  ${String(index + 1).padStart(2, "0")}
+                </p>
+                <button
+                  data-id="${article.id}"
+                  class="remove-btn text-xs text-Dark-grayish-blue hover:text-Soft-red transition-colors cursor-pointer px-2 py-1 rounded border border-Grayish-blue/30"
+                >
+                  Eliminar
+                </button>
+              </div>
+              <a
+                href="/articles/${article.id}"
+                class="font-extrabold text-lg transition-colors duration-300 mb-2 line-clamp-2 hover:text-Soft-red text-Very-dark-blue"
+              >
+                ${article.title}
+              </a>
+              <p class="text-Dark-grayish-blue text-sm line-clamp-2">
+                ${article.description || "No description available."}
+              </p>
+            </div>
+          `;
+
+          bookmarksList.appendChild(item);
+        });
+
+        // Event listener para eliminar
+        document.querySelectorAll(".remove-btn").forEach((btn) => {
+          btn.addEventListener("click", async (e) => {
+            const articleId = (e.currentTarget as HTMLElement).getAttribute("data-id");
+            if (!articleId) return;
+
+            try {
+              const delRes = await fetch(`${apiUrl}/api/bookmarks/${articleId}`, {
+                method: "DELETE",
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              });
+
+              if (delRes.ok) {
+                loadBookmarks();
+              }
+            } catch (err) {
+              console.error(err);
+            }
+          });
+        });
+      }
+    } catch (err) {
+      console.error("Error loading bookmarks:", err);
+    }
+  }
+
+  loadBookmarks();
+</script>

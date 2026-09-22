@@ -3,6 +3,7 @@ import fastifyJwt from '@fastify/jwt'
 import { categoryRoutes } from './routes/categories.js'
 import { articleRoutes } from './routes/articles.js'
 import { authRoutes } from './routes/auth.js';
+import { bookmarkRoutes } from './routes/bookmarks.js';
 import cors from '@fastify/cors'
 
 const fastify = Fastify({
@@ -35,6 +36,9 @@ const start = async () => {
     });
     await fastify.register(authRoutes, {
       prefix: '/auth'
+    });
+    await fastify.register(bookmarkRoutes, {
+      prefix: '/api/bookmarks'
     });
     await fastify.listen({ port: 3001, host: '0.0.0.0' });
 

@@ -33,12 +33,22 @@ const isoDate = article.published_at
         {article.title}
       </h1>
 
-      <div class="flex items-center gap-3 text-sm text-Dark-grayish-blue border-b border-Grayish-blue/30 pb-4">
-        <span class="font-bold text-Very-dark-blue">{article.source}</span>
-        <span>•</span>
-        <time datetime={isoDate}>
-          {formattedDate}
-        </time>
+      <div class="flex items-center justify-between border-b border-Grayish-blue/30 pb-4">
+        <div class="flex items-center gap-3 text-sm text-Dark-grayish-blue">
+          <span class="font-bold text-Very-dark-blue">{article.source}</span>
+          <span>•</span>
+          <time datetime={isoDate}>
+            {formattedDate}
+          </time>
+        </div>
+        <button
+          id="bookmark-btn"
+          data-article-id={article.id}
+          class="flex items-center gap-2 px-3 py-1.5 rounded border border-Grayish-blue/50 text-sm font-bold text-Very-dark-blue hover:border-Soft-red hover:text-Soft-red transition-colors cursor-pointer"
+        >
+          <span id="bookmark-icon">🔖</span>
+          <span id="bookmark-text">Guardar</span>
+        </button>
       </div>
 
       {article.image_url && (
@@ -69,3 +79,76 @@ const isoDate = article.published_at
     </article>
   </section>
 </Layout>
+
+<script>
+  const bookmarkBtn = document.getElementById("bookmark-btn");
+  const bookmarkIcon = document.getElementById("bookmark-icon");
+  const bookmarkText = document.getElementById("bookmark-text");
+  const articleId = bookmarkBtn?.getAttribute("data-article-id");
+  const apiUrl = import.meta.env.PUBLIC_API_URL || "http://localhost:3001";
+  const token = localStorage.getItem("token");
+
+  async function checkBookmark() {
+    if (!token || !articleId) return;
+    try {
+      const res = await fetch(`${apiUrl}/api/bookmarks/check/${articleId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.bookmarked) {
+          setBookmarkedState(true);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function setBookmarkedState(isSaved: boolean) {
+    if (bookmarkIcon && bookmarkText && bookmarkBtn) {
+      if (isSaved) {
+        bookmarkIcon.textContent = "★";
+        bookmarkText.textContent = "Guardado";
+        bookmarkBtn.classList.add("bg-Soft-orange/20", "text-Soft-orange", "border-Soft-orange");
+      } else {
+        bookmarkIcon.textContent = "🔖";
+        bookmarkText.textContent = "Guardar";
+        bookmarkBtn.classList.remove("bg-Soft-orange/20", "text-Soft-orange", "border-Soft-orange");
+      }
+    }
+  }
+
+  bookmarkBtn?.addEventListener("click", async () => {
+    if (!token) {
+      alert("Inicia sesión para guardar este artículo en tus favoritos");
+      window.location.href = "/login";
+      return;
+    }
+
+    const isCurrentlySaved = bookmarkText?.textContent === "Guardado";
+    const method = isCurrentlySaved ? "DELETE" : "POST";
+    const endpoint = isCurrentlySaved
+      ? `${apiUrl}/api/bookmarks/${articleId}`
+      : `${apiUrl}/api/bookmarks`;
+
+    try {
+      const res = await fetch(endpoint, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: method === "POST" ? JSON.stringify({ articleId }) : undefined,
+      });
+
+      if (res.ok) {
+        setBookmarkedState(!isCurrentlySaved);
+      }
+    } catch (e) {
+      console.error("Error updating bookmark:", e);
+    }
+  });
+
+  checkBookmark();
+</script>

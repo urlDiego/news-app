@@ -35,8 +35,7 @@ const articlesData = articles || fallbackArticles;
     articlesData.map((article) => (
       <article class="border-b border-Grayish-blue py-8 last:border-none xl:py-6">
         <a
-          href={article.url}
-          target="_blank"
+          href={article.id ? `/articles/${article.id}` : article.url}
           class="font-extrabold text-xl inline-block mb-2 cursor-pointer hover:text-Soft-orange"
         >
           {article.title}
