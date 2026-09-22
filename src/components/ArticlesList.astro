@@ -14,7 +14,7 @@ const { articles = [] } = Astro.props;
       <article class="flex flex-row gap-5 group cursor-pointer">
         <div class="w-24 h-24 md:w-32 md:h-32 shrink-0 overflow-hidden rounded-xl">
           <img
-            src={article.urlToImage || imageFallback.src}
+            src={article.image_url || article.urlToImage || imageFallback.src}
             alt={article.title}
             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             onerror={`this.onerror=null;this.src='${imageFallback.src}'`}
@@ -24,19 +24,18 @@ const { articles = [] } = Astro.props;
           <p class="text-[2rem] font-bold text-Soft-orange leading-none mb-2">
             {String(index + 1).padStart(2, "0")}
           </p>
-          
+
           <a
             href={article.url}
             class="font-extrabold text-lg transition-colors duration-500 mb-2 line-clamp-2 group-hover:text-Soft-red"
           >
             {article.title}
           </a>
-          
+
           <p class="text-Dark-grayish-blue text-[0.9375rem] line-clamp-3">
             {article.description ?? "No description available."}
           </p>
         </div>
-        
       </article>
     ))
   }

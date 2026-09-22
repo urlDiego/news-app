@@ -6,6 +6,7 @@ interface Article {
     urlToImage: string | null;
     publishedAt: string;
     content: string | null;
+    image_url?: string | null;
     source: {
         id: string | null;
         name: string | null;
