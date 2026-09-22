@@ -2,9 +2,9 @@
 
 **🔗 [Demo en vivo](https://news-app-indol-two.vercel.app/)**
 
-Aplicación de noticias en tiempo real construida con **Astro en modo SSR**, **Tailwind CSS v4** y **TypeScript**. Consume la API pública de [NewsAPI.org](https://newsapi.org/) para mostrar titulares actualizados en cada carga de página.
+Aplicación de noticias en tiempo real construida con **Astro en modo SSR**, **Tailwind CSS v4** y **TypeScript**. Consume la API pública de [NewsAPI.org](https://newsapi.org/) para mostrar titulares actualizados en cada carga de página. La persistencia de datos se maneja con **PostgreSQL** + **Drizzle ORM**, levantado con **Docker**.
 
-> 🚧 **Proyecto en desarrollo activo** — el frontend con SSR y datos reales ya está funcionando. Próximamente se integrará un backend propio, base de datos y autenticación.
+> 🚧 **Proyecto en desarrollo activo** — frontend SSR + base de datos relacional en funcionamiento. Próximamente se integrará un backend Fastify propio y autenticación con JWT.
 
 ---
 
@@ -13,9 +13,11 @@ Aplicación de noticias en tiempo real construida con **Astro en modo SSR**, **T
 - **Noticias en tiempo real** — consume `top-headlines` de tecnología directamente desde NewsAPI
 - **SSR (Server-Side Rendering)** — cada visita obtiene datos frescos desde el servidor con `@astrojs/node`
 - **Responsive design** — layout adaptado para móvil y escritorio con Tailwind CSS v4
-- **Tipado completo** — interfaces TypeScript para `Article` y `NewsAPIResponse`
+- **Tipado completo** — interfaces TypeScript para `Article`, `NewsAPIResponse`, `Category`
 - **Manejo de errores** — fallback elegante si la API falla o `urlToImage` es `null`
 - **Múltiples secciones** — Hero destacado, bloque "New", lista de artículos con ranking
+- **Base de datos relacional** — esquema PostgreSQL con tablas `articles` y `categories`, gestionado con Drizzle ORM
+- **Entorno reproducible** — PostgreSQL y pgAdmin levantados con Docker Compose
 
 ---
 
@@ -28,6 +30,9 @@ Aplicación de noticias en tiempo real construida con **Astro en modo SSR**, **T
 | Lenguaje | TypeScript |
 | Adaptador SSR | `@astrojs/node` |
 | API de datos | [NewsAPI.org](https://newsapi.org/) |
+| Base de datos | PostgreSQL 16 |
+| ORM | [Drizzle ORM](https://orm.drizzle.team/) |
+| Infraestructura local | Docker + Docker Compose |
 | Control de versiones | Git + Conventional Commits |
 
 ---
@@ -61,6 +66,7 @@ src/
 ### Prerrequisitos
 
 - Node.js 22 LTS
+- Docker Desktop
 - Una API key gratuita de [newsapi.org](https://newsapi.org/register)
 
 ### Instalación
@@ -70,27 +76,44 @@ src/
 git clone https://github.com/tu-usuario/news-homepage.git
 cd news-homepage
 
-# Instalar dependencias
+# Instalar dependencias del frontend
 npm install
 
-# Crear el archivo de variables de entorno
+# Instalar dependencias del backend/ORM
+cd news-api && npm install && cd ..
+
+# Crear archivos de variables de entorno
 cp .env.example .env
-# → Editar .env y agregar tu NEWS_API_KEY
+# → Agregar NEWS_API_KEY en .env
+# → Agregar DATABASE_URL en news-api/.env
+
+# Levantar PostgreSQL y pgAdmin con Docker
+docker compose up -d
+
+# Correr las migraciones de base de datos
+cd news-api && npx drizzle-kit migrate && cd ..
 
 # Iniciar el servidor de desarrollo
 npm run dev
 ```
 
 La app estará disponible en `http://localhost:4321`.
+pgAdmin estará disponible en `http://localhost:5050`.
 
 ---
 
 ## 🔑 Variables de entorno
 
-Crear un archivo `.env` en la raíz basándose en `.env.example`:
+**Raíz del proyecto** — archivo `.env`:
 
 ```env
 NEWS_API_KEY=tu_api_key_aquí
+```
+
+**Backend** — archivo `news-api/.env`:
+
+```env
+DATABASE_URL=postgresql://usuario:contraseña@localhost:5432/nombre_bd
 ```
 
 ---
@@ -100,11 +123,9 @@ NEWS_API_KEY=tu_api_key_aquí
 El proyecto está en crecimiento activo. Las siguientes funcionalidades están planificadas:
 
 - **API REST propia** con Node.js y Fastify como intermediario entre el frontend y la base de datos
-- **Base de datos PostgreSQL** para persistir artículos y usuarios
 - **Autenticación con JWT** — registro, login y sesión segura con cookies `httpOnly`
 - **Funcionalidades de usuario** — guardar artículos favoritos, búsqueda por keyword y filtros por categoría
-- **Containerización** con Docker para estandarizar el entorno de desarrollo
-- **Deploy en producción** con todo el stack corriendo en la nube
+- **Script de sincronización** — poblar la BD automáticamente desde NewsAPI
 
 ---
 
