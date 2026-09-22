@@ -19,8 +19,18 @@ export const articles = pgTable('articles', {
     is_featured: boolean('is_featured').default(false).notNull(),
 });
 
+export const users = pgTable('users', {
+    id: serial('id').primaryKey(),
+    email: varchar('email', { length: 255 }).notNull().unique(),
+    password_hash: varchar('password_hash', { length: 255 }).notNull(),
+    created_at: timestamp('created_at').defaultNow().notNull()
+})
+
 export type Category = typeof categories.$inferSelect;
 export type CategoryInsert = typeof categories.$inferInsert;
 
 export type Article = typeof articles.$inferSelect;
 export type ArticleInsert = typeof articles.$inferInsert;
+
+export type User = typeof users.$inferSelect;
+export type UserInsert = typeof users.$inferInsert;
