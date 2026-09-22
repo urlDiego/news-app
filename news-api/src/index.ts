@@ -1,6 +1,8 @@
 import Fastify, { type FastifyError } from 'fastify'
+import fastifyJwt from '@fastify/jwt'
 import { categoryRoutes } from './routes/categories.js'
 import { articleRoutes } from './routes/articles.js'
+import { authRoutes } from './routes/auth.js';
 import cors from '@fastify/cors'
 
 const fastify = Fastify({
@@ -12,6 +14,10 @@ fastify.register(cors, {
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 });
+
+await fastify.register(fastifyJwt, {
+  secret: process.env.JWT_SECRET || 'secret_fallback',
+})
 
 fastify.get('/', async (request, reply) => {
   return { status: 'ok' };
@@ -27,7 +33,11 @@ const start = async () => {
     await fastify.register(articleRoutes, {
       prefix: '/api/articles'
     });
+    await fastify.register(authRoutes, {
+      prefix: '/auth'
+    });
     await fastify.listen({ port: 3001, host: '0.0.0.0' });
+
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
