@@ -1,31 +1,65 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import ArticlesList from "../components/ArticlesList.astro";
+import type { Article } from "../types/news";
 
-const apiUrl = import.meta.env.PUBLIC_API_URL;
-const urlTech = `${apiUrl}/api/articles/category/technology`;
-const urlScience = `${apiUrl}/api/articles/category/science`;
-const [techRes, scienceRes] = await Promise.all([
-  fetch(urlTech),
-  fetch(urlScience),
-]);
-const techArticles = techRes.ok ? await techRes.json() : [];
-const scienceArticles = scienceRes.ok ? await scienceRes.json() : [];
+interface Category {
+  id: number;
+  name: string;
+  slug: string;
+}
 
-let articles: any[] = [];
+interface CategoryGroup {
+  category: Category;
+  articles: Article[];
+}
+
+const apiUrl = import.meta.env.PUBLIC_API_URL || "http://localhost:3001";
+let categoryGroups: CategoryGroup[] = [];
+
+try {
+  const catRes = await fetch(`${apiUrl}/api/categories`);
+  if (catRes.ok) {
+    const cats: Category[] = await catRes.json();
+    const results = await Promise.all(
+      cats.map(async (cat) => {
+        try {
+          const res = await fetch(`${apiUrl}/api/articles/category/${cat.slug}`);
+          const articles: Article[] = res.ok ? await res.json() : [];
+          return { category: cat, articles };
+        } catch {
+          return { category: cat, articles: [] };
+        }
+      })
+    );
+    categoryGroups = results.filter((g) => g.articles.length > 0);
+  }
+} catch (error) {
+  console.error("Error loading categories:", error);
+}
 ---
 
 <Layout>
-  <h1 class="text-[2.5rem] font-extrabold mb-6">Categories</h1>
+  <div class="mb-10">
+    <h1 class="text-[2.5rem] font-extrabold text-Very-dark-blue mb-2">Categories</h1>
+    <p class="text-Dark-grayish-blue text-sm">
+      Browse top headlines grouped by topic.
+    </p>
+  </div>
 
-  <section class="mb-10">
-    <h2 class="text-2xl font-extrabold mb-4">Technology</h2>
-    <ArticlesList articles={techArticles.slice(0, 5)} />
-  </section>
-
-  <section class="mb-10">
-    <h2 class="text-2xl font-extrabold mb-4">Science</h2>
-    <ArticlesList articles={scienceArticles.slice(0, 5)} />
-  </section>
+  <div class="flex flex-col gap-12">
+    {categoryGroups.map(({ category, articles }) => (
+      <section class="border-b border-Grayish-blue/20 pb-12 last:border-none">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-extrabold text-Very-dark-blue">
+            {category.name}
+          </h2>
+          <span class="text-xs uppercase tracking-wider font-bold text-Soft-red bg-Soft-red/10 px-3 py-1 rounded-full">
+            {articles.length} articles
+          </span>
+        </div>
+        <ArticlesList articles={articles.slice(0, 4)} />
+      </section>
+    ))}
+  </div>
 </Layout>
-

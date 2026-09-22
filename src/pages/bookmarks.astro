@@ -6,34 +6,34 @@ import Layout from "../layouts/Layout.astro";
   <section class="max-w-4xl mx-auto px-4 py-8">
     <h1 class="text-[2.5rem] font-extrabold text-Very-dark-blue mb-2">Bookmarks</h1>
     <p class="text-Dark-grayish-blue text-sm mb-8">
-      Tus noticias y artículos guardados para leer más tarde.
+      Your saved news and articles to read later.
     </p>
 
-    <!-- Estado No Autenticado -->
+    <!-- Unauthenticated State -->
     <div id="unauth-state" class="hidden p-8 border border-Grayish-blue/30 rounded-lg text-center bg-Off-white">
-      <p class="text-lg font-bold text-Very-dark-blue mb-2">Inicia sesión para ver tus marcadores</p>
-      <p class="text-Dark-grayish-blue text-sm mb-6">Debes iniciar sesión con tu cuenta para acceder a tus artículos guardados.</p>
+      <p class="text-lg font-bold text-Very-dark-blue mb-2">Sign in to view your bookmarks</p>
+      <p class="text-Dark-grayish-blue text-sm mb-6">You must sign in with your account to access your saved articles.</p>
       <a
         href="/login"
         class="inline-block bg-Very-dark-blue hover:bg-Soft-red text-Off-white font-bold px-8 py-3 uppercase tracking-widest text-sm transition-colors duration-200"
       >
-        Iniciar Sesión
+        Sign In
       </a>
     </div>
 
-    <!-- Estado Vacío -->
+    <!-- Empty State -->
     <div id="empty-state" class="hidden p-8 border border-Grayish-blue/30 rounded-lg text-center bg-Off-white">
-      <p class="text-lg font-bold text-Very-dark-blue mb-2">No tienes artículos guardados</p>
-      <p class="text-Dark-grayish-blue text-sm mb-6">Explora las noticias y presiona el botón "🔖 Guardar" en cualquier artículo.</p>
+      <p class="text-lg font-bold text-Very-dark-blue mb-2">No saved articles yet</p>
+      <p class="text-Dark-grayish-blue text-sm mb-6">Explore the latest news and click "🔖 Bookmark" on any article.</p>
       <a
         href="/"
         class="inline-block bg-Soft-red hover:bg-Very-dark-blue text-Off-white font-bold px-8 py-3 uppercase tracking-widest text-sm transition-colors duration-200"
       >
-        Explorar Noticias
+        Explore News
       </a>
     </div>
 
-    <!-- Lista de Artículos Guardados -->
+    <!-- Bookmarks List -->
     <div id="bookmarks-list" class="flex flex-col gap-6"></div>
   </section>
 </Layout>
@@ -64,7 +64,7 @@ import Layout from "../layouts/Layout.astro";
           unauthState?.classList.remove("hidden");
           return;
         }
-        throw new Error("Error al cargar marcadores");
+        throw new Error("Failed to load bookmarks");
       }
 
       const articles = await res.json();
@@ -100,7 +100,7 @@ import Layout from "../layouts/Layout.astro";
                   data-id="${article.id}"
                   class="remove-btn text-xs text-Dark-grayish-blue hover:text-Soft-red transition-colors cursor-pointer px-2 py-1 rounded border border-Grayish-blue/30"
                 >
-                  Eliminar
+                  Remove
                 </button>
               </div>
               <a
@@ -118,7 +118,7 @@ import Layout from "../layouts/Layout.astro";
           bookmarksList.appendChild(item);
         });
 
-        // Event listener para eliminar
+        // Event listener to remove bookmark
         document.querySelectorAll(".remove-btn").forEach((btn) => {
           btn.addEventListener("click", async (e) => {
             const articleId = (e.currentTarget as HTMLElement).getAttribute("data-id");

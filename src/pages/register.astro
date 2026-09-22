@@ -5,30 +5,30 @@ import Layout from "../layouts/Layout.astro";
 <Layout>
   <section class="max-w-md mx-auto px-4 py-12">
     <div class="bg-Off-white border border-Grayish-blue/20 rounded-lg p-8 shadow-sm">
-      <h1 class="text-3xl font-extrabold text-Very-dark-blue mb-2">Crear Cuenta</h1>
+      <h1 class="text-3xl font-extrabold text-Very-dark-blue mb-2">Create Account</h1>
       <p class="text-Dark-grayish-blue text-sm mb-6">
-        ¿Ya tienes cuenta?{" "}
-        <a href="/login" class="text-Soft-red hover:underline font-bold">Inicia sesión</a>
+        Already have an account?{" "}
+        <a href="/login" class="text-Soft-red hover:underline font-bold">Sign in</a>
       </p>
 
       <form id="register-form" class="flex flex-col gap-4">
         <div>
           <label for="email" class="block text-sm font-bold text-Very-dark-blue mb-1">
-            Correo electrónico
+            Email address
           </label>
           <input
             type="email"
             id="email"
             name="email"
             required
-            placeholder="usuario@ejemplo.com"
+            placeholder="user@example.com"
             class="w-full px-4 py-2.5 border border-Grayish-blue/50 rounded focus:outline-none focus:border-Very-dark-blue transition-colors"
           />
         </div>
 
         <div>
           <label for="password" class="block text-sm font-bold text-Very-dark-blue mb-1">
-            Contraseña
+            Password
           </label>
           <input
             type="password"
@@ -46,7 +46,7 @@ import Layout from "../layouts/Layout.astro";
           type="submit"
           class="w-full bg-Very-dark-blue hover:bg-Soft-red text-Off-white font-bold py-3 uppercase tracking-widest text-sm transition-colors duration-200 mt-2 cursor-pointer"
         >
-          Registrarse
+          Sign Up
         </button>
       </form>
     </div>
@@ -82,20 +82,18 @@ import Layout from "../layouts/Layout.astro";
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Error al registrar la cuenta");
+        throw new Error(data.error || "Error registering account");
       }
 
-      // Si el endpoint de registro devuelve directamente el token, se inicia sesión
       if (data.token) {
         localStorage.setItem("token", data.token);
         window.location.href = "/";
       } else {
-        // En caso de que el backend solo cree el usuario sin sesión automática:
         window.location.href = "/login";
       }
     } catch (err: any) {
       if (errorMsg) {
-        errorMsg.textContent = err.message || "Ocurrió un error inesperado";
+        errorMsg.textContent = err.message || "An unexpected error occurred";
         errorMsg.classList.remove("hidden");
       }
     }

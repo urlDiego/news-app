@@ -47,7 +47,7 @@ const isoDate = article.published_at
           class="flex items-center gap-2 px-3 py-1.5 rounded border border-Grayish-blue/50 text-sm font-bold text-Very-dark-blue hover:border-Soft-red hover:text-Soft-red transition-colors cursor-pointer"
         >
           <span id="bookmark-icon">🔖</span>
-          <span id="bookmark-text">Guardar</span>
+          <span id="bookmark-text">Bookmark</span>
         </button>
       </div>
 
@@ -109,11 +109,11 @@ const isoDate = article.published_at
     if (bookmarkIcon && bookmarkText && bookmarkBtn) {
       if (isSaved) {
         bookmarkIcon.textContent = "★";
-        bookmarkText.textContent = "Guardado";
+        bookmarkText.textContent = "Saved";
         bookmarkBtn.classList.add("bg-Soft-orange/20", "text-Soft-orange", "border-Soft-orange");
       } else {
         bookmarkIcon.textContent = "🔖";
-        bookmarkText.textContent = "Guardar";
+        bookmarkText.textContent = "Bookmark";
         bookmarkBtn.classList.remove("bg-Soft-orange/20", "text-Soft-orange", "border-Soft-orange");
       }
     }
@@ -121,12 +121,12 @@ const isoDate = article.published_at
 
   bookmarkBtn?.addEventListener("click", async () => {
     if (!token) {
-      alert("Inicia sesión para guardar este artículo en tus favoritos");
+      alert("Please sign in to save this article to your bookmarks");
       window.location.href = "/login";
       return;
     }
 
-    const isCurrentlySaved = bookmarkText?.textContent === "Guardado";
+    const isCurrentlySaved = bookmarkText?.textContent === "Saved";
     const method = isCurrentlySaved ? "DELETE" : "POST";
     const endpoint = isCurrentlySaved
       ? `${apiUrl}/api/bookmarks/${articleId}`
