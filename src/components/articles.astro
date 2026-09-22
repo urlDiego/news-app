@@ -14,7 +14,7 @@ const { articles = [] } = Astro.props;
       <article class="flex flex-row gap-4 items-start group cursor-pointer">
         <div class="w-20 h-20 shrink-0 overflow-hidden rounded-md shadow-sm">
           <img
-            src={article.image_url || article.urlToImage || imageFallback.src}
+            src={article.image_url || article.imageUrl || article.urlToImage || imageFallback.src}
             alt={article.title}
             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             onerror={`this.onerror=null;this.src='${imageFallback.src}'`}
