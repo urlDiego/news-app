@@ -1,0 +1,71 @@
+---
+import Layout from "../../layouts/Layout.astro";
+const { id } = Astro.params;
+const apiUrl = import.meta.env.PUBLIC_API_URL;
+const response = await fetch(`${apiUrl}/api/articles/${id}`);
+if (!response.ok) {
+  return new Response(null, { status: 404, statusText: "Not Found" });
+}
+const article = await response.json();
+const formattedDate = article.published_at
+  ? new Date(article.published_at).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    })
+  : "Recent";
+const isoDate = article.published_at
+  ? new Date(article.published_at).toISOString()
+  : undefined;
+---
+
+<Layout>
+  <section class="max-w-4xl mx-auto px-4 py-8">
+    <a
+      href="/"
+      class="text-Soft-red hover:underline mb-6 inline-block font-bold text-sm tracking-wide"
+    >
+      ← Back to home
+    </a>
+
+    <article class="flex flex-col gap-6">
+      <h1 class="text-3xl lg:text-4xl font-extrabold text-Very-dark-blue leading-tight">
+        {article.title}
+      </h1>
+
+      <div class="flex items-center gap-3 text-sm text-Dark-grayish-blue border-b border-Grayish-blue/30 pb-4">
+        <span class="font-bold text-Very-dark-blue">{article.source}</span>
+        <span>•</span>
+        <time datetime={isoDate}>
+          {formattedDate}
+        </time>
+      </div>
+
+      {article.image_url && (
+        <div class="overflow-hidden rounded-lg shadow-md max-h-[450px] w-full bg-Grayish-blue/20">
+          <img
+            src={article.image_url}
+            alt={article.title}
+            class="w-full h-full object-cover object-center"
+            loading="lazy"
+          />
+        </div>
+      )}
+
+      <div class="text-base lg:text-lg text-Dark-grayish-blue leading-relaxed">
+        <p>{article.description ?? "No description available for this article."}</p>
+      </div>
+
+      <div class="pt-4">
+        <a
+          href={article.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-block bg-Soft-red text-Off-white font-bold text-sm uppercase tracking-widest px-8 py-3.5 hover:bg-Very-dark-blue transition-colors duration-200 shadow-sm"
+        >
+          Read original article
+        </a>
+      </div>
+    </article>
+  </section>
+</Layout>

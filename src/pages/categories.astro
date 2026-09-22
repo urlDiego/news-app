@@ -1,38 +1,31 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import ArticlesList from "../components/ArticlesList.astro";
-import type { NewsAPIResponse } from "../types/news";
-const apiKey = import.meta.env.NEWS_API_KEY;
-const urlTech = `https://newsapi.org/v2/top-headlines?country=us&category=technology&apiKey=${apiKey}`;
-const urlScience = `https://newsapi.org/v2/top-headlines?country=us&category=science&apiKey=${apiKey}`;
-const urlSports = `https://newsapi.org/v2/top-headlines?country=us&category=sports&apiKey=${apiKey}`;
-let techData: NewsAPIResponse | null = null;
-let scienceData: NewsAPIResponse | null = null;
-let sportsData: NewsAPIResponse | null = null;
-try {
-    [techData, scienceData, sportsData] = await Promise.all([
-        fetch(urlTech).then((r) => r.json()),
-        fetch(urlScience).then((r) => r.json()),
-        fetch(urlSports).then((r) => r.json()),
-    ]);
-} catch (error) {
-    console.error("Error al obtener datos", error);
-}
 
+const apiUrl = import.meta.env.PUBLIC_API_URL;
+const urlTech = `${apiUrl}/api/articles/category/technology`;
+const urlScience = `${apiUrl}/api/articles/category/science`;
+const [techRes, scienceRes] = await Promise.all([
+  fetch(urlTech),
+  fetch(urlScience),
+]);
+const techArticles = techRes.ok ? await techRes.json() : [];
+const scienceArticles = scienceRes.ok ? await scienceRes.json() : [];
+
+let articles: any[] = [];
 ---
 
 <Layout>
-  <h1 class="text-[2.5rem] font-extrabold mb-4">Categories</h1>
-  <section class="mb-6">
+  <h1 class="text-[2.5rem] font-extrabold mb-6">Categories</h1>
+
+  <section class="mb-10">
     <h2 class="text-2xl font-extrabold mb-4">Technology</h2>
-    <ArticlesList articles={techData?.articles.slice(0, 3)} />
+    <ArticlesList articles={techArticles.slice(0, 5)} />
   </section>
-  <section class="mb-6">
+
+  <section class="mb-10">
     <h2 class="text-2xl font-extrabold mb-4">Science</h2>
-    <ArticlesList articles={scienceData?.articles.slice(0, 3)} />
-  </section>
-  <section class="mb-6">
-    <h2 class="text-2xl font-extrabold mb-4">Sports</h2>
-    <ArticlesList articles={sportsData?.articles.slice(0, 3)} />
+    <ArticlesList articles={scienceArticles.slice(0, 5)} />
   </section>
 </Layout>
+
