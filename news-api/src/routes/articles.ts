@@ -7,7 +7,12 @@ import { eq } from 'drizzle-orm';
 export async function articleRoutes(fastify: FastifyInstance) {
     fastify.get('/', async (request, reply) => {
         try {
-            const allArticles = await db.select().from(articles);
+            const { page = '1', limit = '10' } = request.query as { page?: string, limit?: string };
+            const pageNum = Math.max(1, Number(page) || 1);
+            const limitNum = Math.max(1, Number(limit) || 10);
+            const offsetNum = (pageNum - 1) * limitNum;
+
+            const allArticles = await db.select().from(articles).limit(limitNum).offset(offsetNum);
             return allArticles;
         } catch (err) {
             request.log.error(err);

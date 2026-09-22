@@ -1,4 +1,4 @@
-import Fastify from 'fastify';
+import Fastify, { type FastifyError } from 'fastify';
 import { categoryRoutes } from './routes/categories.js'
 import { articleRoutes } from './routes/articles.js'
 
@@ -24,5 +24,15 @@ const start = async () => {
     process.exit(1);
   }
 };
+
+fastify.setErrorHandler(function (error: FastifyError, request, reply) {
+  request.log.error(error)
+  const statusCode = error.statusCode || 500
+  reply.status(statusCode).send({
+    statusCode,
+    error: error.name || 'Internal Server Error',
+    message: error.message
+  });
+})
 
 start();
