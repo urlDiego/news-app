@@ -64,19 +64,18 @@ export async function articleRoutes(fastify: FastifyInstance) {
     fastify.get('/:id', async (request, reply) => {
         try {
             const { id } = request.params as { id: string };
-            const article = await db.select().from(articles).where(eq(articles.id, Number(id)));
-            if (article.length) {
-                const item = article[0];
-                return {
-                    ...item,
-                    image_url: item.image_url,
-                    imageUrl: item.image_url,
-                    urlToImage: item.image_url,
-                    published_at: item.published_at,
-                    publishedAt: item.published_at,
-                };
+            const [item] = await db.select().from(articles).where(eq(articles.id, Number(id)));
+            if (!item) {
+                return reply.status(404).send({ error: 'Article not found' });
             }
-            return reply.status(404).send({ error: 'Article not found' });
+            return {
+                ...item,
+                image_url: item.image_url,
+                imageUrl: item.image_url,
+                urlToImage: item.image_url,
+                published_at: item.published_at,
+                publishedAt: item.published_at,
+            };
         } catch (err) {
             request.log.error(err);
             reply.status(500).send({ error: 'Internal Server Error' });
