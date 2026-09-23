@@ -3,7 +3,16 @@ import { db } from "../db/index.js";
 import { articles, categories } from '../db/schema.js';
 import { eq, desc } from 'drizzle-orm';
 
+/**
+ * Registers REST API endpoints for querying and retrieving articles.
+ * 
+ * @param fastify - The Fastify instance to register routes on.
+ */
 export async function articleRoutes(fastify: FastifyInstance) {
+    /**
+     * GET /api/articles
+     * Retrieves paginated articles with optional sorting ('new', 'popular', 'trending').
+     */
     fastify.get('/', async (request, reply) => {
         try {
             const { 
@@ -61,6 +70,10 @@ export async function articleRoutes(fastify: FastifyInstance) {
         }
     });
 
+    /**
+     * GET /api/articles/:id
+     * Retrieves a single article by its database ID, returning 404 if not found.
+     */
     fastify.get('/:id', async (request, reply) => {
         try {
             const { id } = request.params as { id: string };
@@ -82,6 +95,10 @@ export async function articleRoutes(fastify: FastifyInstance) {
         }
     });
 
+    /**
+     * GET /api/articles/category/:slug
+     * Retrieves articles belonging to a specific category slug.
+     */
     fastify.get('/category/:slug', async (request, reply) => {
         try {
             const { slug } = request.params as { slug: string };

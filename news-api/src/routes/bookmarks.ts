@@ -3,6 +3,12 @@ import { and, eq } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { bookmarks, articles } from "../db/schema.js";
 
+/**
+ * Middleware hook that validates JWT authentication on bookmark endpoints.
+ * 
+ * @param request - The Fastify request object.
+ * @param reply - The Fastify reply object used to send 401 when token is invalid or missing.
+ */
 const authenticate = async (request: any, reply: any) => {
   try {
     await request.jwtVerify();
@@ -11,11 +17,19 @@ const authenticate = async (request: any, reply: any) => {
   }
 };
 
+/**
+ * Registers protected REST API endpoints for user bookmarks / favorites.
+ * 
+ * @param fastify - The Fastify instance to register routes on.
+ */
 export async function bookmarkRoutes(fastify: FastifyInstance) {
   // Proteger todas las rutas de marcadores con preHandler
   fastify.addHook("preHandler", authenticate);
 
-  // 1. Obtener todos los marcadores del usuario autenticado
+  /**
+   * GET /api/bookmarks
+   * Retrieves all bookmarked articles belonging to the authenticated user.
+   */
   fastify.get("/", async (request, reply) => {
     try {
       const userId = (request.user as { id: number }).id;
@@ -42,7 +56,10 @@ export async function bookmarkRoutes(fastify: FastifyInstance) {
     }
   });
 
-  // 2. Verificar si un artículo específico está guardado
+  /**
+   * GET /api/bookmarks/check/:articleId
+   * Checks whether a specific article is currently bookmarked by the user.
+   */
   fastify.get("/check/:articleId", async (request, reply) => {
     try {
       const userId = (request.user as { id: number }).id;
@@ -66,7 +83,10 @@ export async function bookmarkRoutes(fastify: FastifyInstance) {
     }
   });
 
-  // 3. Guardar artículo en favoritos
+  /**
+   * POST /api/bookmarks
+   * Adds an article to the user's bookmarks list.
+   */
   fastify.post("/", async (request, reply) => {
     try {
       const userId = (request.user as { id: number }).id;
@@ -103,7 +123,10 @@ export async function bookmarkRoutes(fastify: FastifyInstance) {
     }
   });
 
-  // 4. Eliminar artículo de favoritos
+  /**
+   * DELETE /api/bookmarks/:articleId
+   * Removes an article from the user's bookmarks list.
+   */
   fastify.delete("/:articleId", async (request, reply) => {
     try {
       const userId = (request.user as { id: number }).id;

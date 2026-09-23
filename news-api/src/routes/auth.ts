@@ -9,6 +9,12 @@ interface AuthBody {
     password?: string;
 }
 
+/**
+ * Middleware hook that verifies the incoming JSON Web Token (JWT) on protected requests.
+ * 
+ * @param request - The Fastify request object.
+ * @param reply - The Fastify reply object used to send 401 on authentication failure.
+ */
 const authenticate = async (request: any, reply: any) => {
     try {
         await request.jwtVerify();
@@ -17,8 +23,16 @@ const authenticate = async (request: any, reply: any) => {
     }
 };
 
-
+/**
+ * Registers authentication REST endpoints (register, login, me).
+ * 
+ * @param fastify - The Fastify instance to register routes on.
+ */
 export async function authRoutes(fastify: FastifyInstance) {
+    /**
+     * POST /auth/register
+     * Registers a new user with email and hashed password (bcrypt).
+     */
     fastify.post("/register", async (request, reply) => {
         try {
             const { email, password } = request.body as AuthBody;
@@ -62,6 +76,10 @@ export async function authRoutes(fastify: FastifyInstance) {
         }
     });
 
+    /**
+     * POST /auth/login
+     * Validates credentials and returns a signed JWT token valid for 7 days.
+     */
     fastify.post("/login", async (request, reply) => {
         try {
             const { email, password } = request.body as AuthBody;
@@ -107,6 +125,11 @@ export async function authRoutes(fastify: FastifyInstance) {
             return reply.status(500).send({ error: "Internal Server Error" });
         }
     });
+
+    /**
+     * GET /auth/me
+     * Protected endpoint returning the decoded JWT payload of the authenticated user.
+     */
     fastify.get('/me', { preHandler: [authenticate] }, async (request, reply) => {
         return { user: request.user };
     });
