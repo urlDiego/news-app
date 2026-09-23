@@ -1,4 +1,4 @@
-import { pgTable, serial, varchar, integer, boolean, timestamp, } from 'drizzle-orm/pg-core';
+import { pgTable, serial, varchar, text, integer, boolean, timestamp } from 'drizzle-orm/pg-core';
 
 export const categories = pgTable('categories',{
     id: serial('id').primaryKey(),
@@ -9,10 +9,10 @@ export const categories = pgTable('categories',{
 
 export const articles = pgTable('articles', {
     id: serial('id').primaryKey(),
-    title: varchar('title', { length: 200 }).notNull(),
-    description: varchar('description', { length: 255 }),
-    image_url: varchar('image_url', { length: 255 }),
-    url: varchar('url', { length: 255 }).notNull().unique(),
+    title: varchar('title', { length: 255 }).notNull(),
+    description: text('description'),
+    image_url: text('image_url'),
+    url: text('url').notNull().unique(),
     category_id: integer('category_id').references(() => categories.id),
     published_at: timestamp('published_at').defaultNow(),
     source: varchar('source', { length: 255 }),

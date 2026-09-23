@@ -4,11 +4,11 @@ import Hero from "../components/Hero.astro";
 import New from "../components/New.astro";
 import Articles from "../components/articles.astro";
 
-const apiUrl = import.meta.env.PUBLIC_API_URL;
+const apiUrl = import.meta.env.PUBLIC_API_URL || "http://localhost:3001";
 let articles: any[] = [];
 
 try {
-  const respuesta = await fetch(`${apiUrl}/api/articles?limit=10`);
+  const respuesta = await fetch(`${apiUrl}/api/articles?limit=15`);
   if (!respuesta.ok) {
     throw new Error(`Error de la API: ${respuesta.status}`);
   }
@@ -16,12 +16,15 @@ try {
 } catch (error) {
   console.error("Error al obtener datos:", error);
 }
+
+const heroArticle = articles.find((a) => a.image_url || a.imageUrl) || articles[0];
+const remainingArticles = articles.filter((a) => a.id !== heroArticle?.id);
 ---
 
 <Layout>
   <div class="flex flex-col lg:flex-row gap-6 mb-12 items-stretch">
-    <Hero styles="flex-2" article={articles[0]} />
-    <New styles="flex-1" articles={articles.slice(1, 4)} />
+    <Hero styles="flex-2" article={heroArticle} />
+    <New styles="flex-1" articles={remainingArticles.slice(0, 3)} />
   </div>
-  <Articles articles={articles.slice(4, 7)} />
+  <Articles articles={remainingArticles.slice(3, 6)} />
 </Layout>

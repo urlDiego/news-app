@@ -74,9 +74,9 @@ async function seedAndSync() {
       const articlesToInsert = data.articles
         .filter((item) => item.title && item.url && item.title !== "[Removed]")
         .map((item) => ({
-          title: item.title.slice(0, 200),
-          description: item.description ? item.description.slice(0, 255) : null,
-          image_url: item.urlToImage ? item.urlToImage.slice(0, 255) : null,
+          title: item.title.slice(0, 255),
+          description: item.description ?? null,
+          image_url: item.urlToImage ?? null,
           url: item.url,
           source: item.source?.name ? item.source.name.slice(0, 255) : "Unknown",
           published_at: new Date(item.publishedAt),
