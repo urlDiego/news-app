@@ -10,8 +10,24 @@ const fastify = Fastify({
   logger: true
 })
 
+const allowedOrigins = [
+  'http://localhost:4321',
+  'http://localhost:3000',
+  ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
+];
+
 fastify.register(cors, {
-  origin: 'http://localhost:4321',
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true);
+    if (
+      allowedOrigins.includes(origin) ||
+      origin.endsWith('.vercel.app') ||
+      process.env.NODE_ENV !== 'production'
+    ) {
+      return cb(null, true);
+    }
+    return cb(null, true);
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 });
@@ -23,8 +39,6 @@ await fastify.register(fastifyJwt, {
 fastify.get('/', async (request, reply) => {
   return { status: 'ok' };
 });
-
-
 
 const start = async () => {
   try {
@@ -40,7 +54,8 @@ const start = async () => {
     await fastify.register(bookmarkRoutes, {
       prefix: '/api/bookmarks'
     });
-    await fastify.listen({ port: 3001, host: '0.0.0.0' });
+    const port = Number(process.env.PORT) || 3001;
+    await fastify.listen({ port, host: '0.0.0.0' });
 
   } catch (err) {
     fastify.log.error(err);
