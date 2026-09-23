@@ -73,7 +73,7 @@ El proyecto implementa una arquitectura híbrida de microservicios desacoplados:
 ## ✨ Características Principales
 
 - **📰 Portada Inteligente y Hero Resiliente**:
-  - Algoritmo que selecciona automáticamente como noticia principal (`Hero`) el artículo más reciente que cuente con imagen válida en alta calidad.
+  - Algoritmo que selecciona automáticamente como noticia principal (`Hero`) el artículo más reciente.
   - Deduplicación automática para asegurar que el artículo destacado en Hero no se repita en las secciones laterales (`New`) ni inferiores (`ArticlesList`).
   - Fallbacks visuales nativos (`onerror`) con imágenes Web3 en caso de fallos de red en recursos externos.
 
@@ -98,7 +98,7 @@ El proyecto implementa una arquitectura híbrida de microservicios desacoplados:
   - Preservación íntegra de URLs de imágenes largas sin truncamiento mediante tipos de datos `text` en base de datos.
 
 - **🎨 Diseño Responsivo y Accesible**:
-  - Adaptabilidad total de pantallas móviles a monitores de escritorio (Mobile First).
+  - Adaptabilidad total de pantallas móviles a monitores de escritorio.
   - Estilizado con la versión más reciente de **Tailwind CSS v4**.
   - Menú lateral interactivo para dispositivos móviles y navegación semántica con contraste WCAG AA.
 
@@ -318,7 +318,6 @@ Abre en tu navegador:
 
 ## 🧪 Estándares de Código y Buenas Prácticas
 
-- **Commits Profesionales**: Historial gestionado bajo la especificación [Conventional Commits](https://www.conventionalcommits.org/) (`feat`, `fix`, `docs`, `chore`, `refactor`).
 - **Seguridad**:
   - Hashing seguro de contraseñas con `bcryptjs`.
   - CORS configurado con lista blanca estricta de orígenes.
@@ -332,4 +331,4 @@ Abre en tu navegador:
 
 Este proyecto se encuentra distribuido bajo la licencia [MIT](LICENSE).
 
-Desarrollado por [Diego](https://github.com/urlDiego) como parte del proyecto de arquitectura fullstack moderna.
+Desarrollado por [Diego](https://github.com/urlDiego).
